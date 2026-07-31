@@ -434,6 +434,7 @@ File penting di root:
 - Gunakan identifier random/UUID untuk object storage bila relevan.
 - Scan file untuk malware apabila jenis aplikasi dan tingkat risiko membutuhkannya.
 - Gambar/file user yang ditampilkan kembali harus menggunakan content type dan header yang aman.
+- Setelah file berhasil di upload ke supabase storage, link file tersebut wajib di set di database yang sesuai. Jika gagal mengupload file ke database, maka hapus file tersebut dari supabase storage agar tidak terjadi penumpukan file sampah pada storage.
 
 ### Security Headers
 
@@ -673,3 +674,23 @@ Jika terdapat konflik implementasi, gunakan urutan prioritas berikut:
 7. Maintainability dan kesederhanaan kode.
 8. Konsistensi UI/UX.
 9. Kecepatan implementasi.
+
+
+## Tabel Halaman & Data Grid
+- Pastikan setiap tabel/data grid memiliki batas baris per halaman (*page size*) dan kontrol pagination.
+- Batas baris bawaan (*default limit*) adalah **10**, tetapi harus mendukung opsi perubahan (misal: 25, 50, 100).
+- Gunakan komponen pagination bawaan dari **shadcn/ui** untuk konsistensi UI/UX.
+- Pastikan state pagination (seperti `page` dan `pageSize`) tersinkronisasi dengan URL query parameters jika diperlukan untuk shareability/bookmark.
+
+## Kualitas Kode & Maintainability
+- **Pemisahan Query Server & Client**: Pisahkan logic fetch data antara Server Component (atau Server Actions/Services) dan Client Component secara tegas agar mudah dibaca dan di-maintain.
+- **Konsistensi Pola Logic**: Selalu gunakan arsitektur, penamaan, dan alur logic yang seragam pada setiap fitur.
+- **Prinsip DRY (Don't Repeat Yourself)**: Hindari duplikasi fungsi/logic; abstraksikan helper function atau reusable hooks untuk kode yang sering digunakan.
+- **Error Handling & Validation**: Terapkan *defensive programming*, validasi *input* (client-side untuk UX, server-side untuk keamanan), dan *fallback state* agar aplikasi tetap berjalan stabil meskipun terjadi kesalahan tak terduga.
+- **State Management**: Gunakan state management yang sesuai dengan kompleksitas fitur (misal: `useState`/`useReducer` untuk state lokal, `useContext`/Redux/ Zustand untuk global state, dan server state management seperti TanStack Query/SWR untuk data fetched).
+- **Testing**: Implementasikan unit testing dan/atau integration testing untuk logic kritis, dan pastikan *test coverage* terjaga seiring pengembangan.
+
+## Best Practices Tambahan untuk Developer
+- **Dokumentasi Inline**: Tambahkan komentar yang jelas untuk menjelaskan *logic* yang kompleks atau *decision* yang krusial, terutama pada bagian yang ambigu atau *edge case*.
+- **Performance Optimization**: Perhatikan potensi *bottleneck* pada query database (pastikan penggunaan index dan pagination yang efisien) dan render React (gunakan `React.memo`, `useCallback`, `useMemo` jika perlu untuk menghindari *unnecessary re-renders`).
+- **Security**: Selalu prioritaskan keamanan dengan menerapkan prinsip *least privilege*, sanitasi *input*, dan validasi *output* untuk mencegah celah keamanan seperti XSS, SQL injection, atau kebocoran data.
